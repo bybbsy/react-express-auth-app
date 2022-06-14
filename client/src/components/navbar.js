@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-asas
-function navbar() {
+
+function Navbar() {
     return (
         <header className="header">
             <div className="header__inner">
@@ -19,4 +19,4 @@ function navbar() {
     )
 }
 
-export default navbar;
+export default Navbar;
