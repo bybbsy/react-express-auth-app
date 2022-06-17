@@ -1,4 +1,7 @@
 const { Router } = require('express')
+const UserModel = require('../models/user')
+const TokenModel = require('../models/token')
+
 const jwt = require('jsonwebtoken')
 
 const router = Router()
@@ -19,10 +22,6 @@ const posts = [
 ]
 
 
-const users = [
-
-]
-
 router.post('/login', (req, res) => {
     const username = req.body.username;
     const user = { name: username };
@@ -34,67 +33,143 @@ router.post('/login', (req, res) => {
     })
 })
 
+function validateAccessToken(token) {
+    try {
+        const userData = jwt.verify(token, process.env.ACCESS_TOKEN);
+        return userData;
+    } catch (e) {
+        return null;
+    }
+}
 
-router.post('/sign-up', (req, res) => {
-    console.log(users)
-    const username = req.body.username;
+function validateRefreshToken(token) {
+    try {
+        const userData = jwt.verify(token, process.env.REFRESH_TOKEN);
+        return userData;
+    } catch (e) {
+        return null;
+    }
+}
+
+router.post('/sign-up', async (req, res) => {
+
+    const email = req.body.email;
     const password = req.body.password;
 
-     
-    const candidate = users.filter(u => u.username === username)
-    if(candidate[0]) {
+    const candidate = await UserModel.findOne({email})
+    
+    if(candidate) {
         throw new Error("User already exists!")
     }
 
-    const user = {
-        username,
-        password
+    const user = await UserModel.create({ email, password })
+
+    console.log(typeof user)
+    const accessToken = jwt.sign(user.toJSON(), process.env.ACCESS_TOKEN, { expiresIn: '15s'})
+    const refreshToken = jwt.sign(user.toJSON(), process.env.REFRESH_TOKEN, { expiresIn: '30s'})
+
+    const tokenData = await TokenModel.findOne({ user: user._id })
+    
+    let token;
+    if(tokenData) {
+        tokenData.refreshToken = refreshToken;
+        await tokenData.save();
+    } else {
+        token = await TokenModel.create({ user: user._id, refreshToken })
     }
 
-    const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN, { expiresIn: '30m'})
-    const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN, { expiresIn: '1d'})
+    res.cookie('refreshToken', refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000 });
 
-    user.accessToken = accessToken;
-    user.refreshToken = refreshToken;
+    res.send({ user, accessToken, refreshToken })
+})
 
-    users.push(user);
+router.post('/sign-in', async (req, res) => {
+    const { email, password } = req.body;
+ 
+    const user = await UserModel.findOne({email});
+ 
+    if(!user) {
+        throw new Error('there is no such user');
+    }
+
+    const accessToken = jwt.sign(user.toJSON(), process.env.ACCESS_TOKEN, { expiresIn: '15s'})
+    const refreshToken = jwt.sign(user.toJSON(), process.env.REFRESH_TOKEN, { expiresIn: '30s'})
+
+    const tokenData = await TokenModel.findOne({ user: user._id })
+    
+    let token;
+
+    if(tokenData) {
+        tokenData.refreshToken = refreshToken;
+        await tokenData.save();
+    } else {
+        token = await TokenModel.create({ user: user._id, refreshToken })
+    }
+
+    res.cookie('refreshToken', refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: false});
+    
+    const tokens = {
+        accessToken,
+        refreshToken
+    }
+
+    res.send({user, tokens})
+})
+
+router.post('/sign-out', async (req, res) => {
+    const { refreshToken } = req.cookies
+    const tokenData = await TokenModel.deleteOne({ refreshToken })
+
+    res.clearCookie('refreshToken');
 
     res.send({
-        user
+        msg: 'logged out',
+        token: tokenData
     })
 })
 
-router.post('/sign-in', (req, res) => {
-    console.log(users)
-    const { username, password } = req.body;
+router.post('/refresh', async (req, res) => {
+    try {
 
-    const candidate = users.filter(u => u.username === username);
-
-    if(!candidate[0]) {
-        throw new Error('There is no such user');
-    }
-
-    const user = {
-        username,
-        password
-    }
-
-    const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN, { expiresIn: '30m'})
-    const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN, { expiresIn: '1d'})
-
-    user.accessToken = accessToken;
-    user.refreshToken = refreshToken;
-
-    users.forEach(u => {
-        if(u.username === username) {
-            u.accessToken = accessToken;
-            u.refreshToken = refreshToken
+        const rt = req.cookies.refreshToken;
+ 
+        const userData = validateRefreshToken(rt)
+        const tokenInDB = await TokenModel.findOne({ refreshToken: rt })
+    
+        console.log(!userData || !tokenInDB)
+        if(!userData || !tokenInDB) {
+            throw new Error('Unauth error')
         }
-    })
+    
+        const user = await UserModel.findById(userData._id)
+        const accessToken = jwt.sign(user.toJSON(), process.env.ACCESS_TOKEN, { expiresIn: '15s'})
+        const refreshToken = jwt.sign(user.toJSON(), process.env.REFRESH_TOKEN, { expiresIn: '30s'})
+    
+        const tokenData = await TokenModel.findOne({ user: user._id })
+        
+        let token;
+    
+        if(tokenData) {
+            tokenData.refreshToken = refreshToken;
+            await tokenData.save();
+        } else {
+            token = await TokenModel.create({ user: user._id, refreshToken })
+        }
+    
+        res.cookie('refreshToken', refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000 });
+    
+        const tokens = {
+            accessToken,
+            refreshToken
+        }
 
-    res.send(user)
-
+        console.log(tokens)
+        res.send({user, tokens});
+    } catch (e) {
+        return res.status(401).json({msg: e.message});   
+    }
 })
+
 
 router.get('/posts', authenticateToken, (req, res) => {
     console.log('Request:', req.user)
