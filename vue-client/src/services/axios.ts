@@ -10,38 +10,38 @@ export class AxiosClient {
             baseURL
         })
 
-        this.client.interceptors.request.use((config) => {
-            config.headers!.Authorization = `Bearer ${localStorage.getItem('accessToken')}`
-            return config;
-        })
+        this.client.interceptors.response.use(
+            config => config,
+            async (error) => {
+                const origialRequest = error.config;
 
-        this.client.interceptors.response.use((config) => {
-            return config;
-        }, async (error) => {
-            const origialRequest = error.config;
-
-            if(error.response.status == 401 && error.config && !error.config._isRetry) {
-                origialRequest._isRetry = true
-                try {
-                    const res = await axios.post('http://localhost:3000/api/refresh', null, {
-                        withCredentials: true,
-                        headers: {
-                            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
-                            }
-                        });
+                if(error.response.status == 403 && !error.config._isRetry) {
+                    origialRequest._isRetry = true
+                    try {
+                        const res = await axios.post('http://localhost:3000/api/refresh', null, {
+                            withCredentials: true,
+                            headers: {
+                                'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                                }
+                            });
+            
+                            
+                        const { user, tokens } : IUserData = res.data;
         
-                        
-                    const { user, tokens } : IUserData = res.data;
-    
-                    localStorage.setItem('accessToken', tokens.accessToken)
-    
-                    return this.client.request(origialRequest)
-                } catch (e) {
-                    console.log("User is unauthorized")
+                        localStorage.setItem('accessToken', tokens.accessToken)
+        
+                        return this.client.request(origialRequest)
+                    } catch (e) {
+                        console.log("User is unauthorized")
+
+                        // Remove accessToken and refreshToken to prevent from reloading page
+                        // if refreshToken is expired
+                        localStorage.removeItem('accessToken')
+                        document.cookie = 'refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;'
+                    }
                 }
-            }
-            throw error;
-        })
+                throw error;
+            })
     }
 
     async get<T>(url: string, params?: AxiosRequestConfig): Promise<T> {

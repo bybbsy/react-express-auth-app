@@ -25,7 +25,7 @@ export const logout = async () => {
 }
 
 export const refresh = async():  Promise<IUserData> => {
-  return authServiceClient.emptyPost('http://localhost:3000/api/refresh', null, {
+  return authServiceClient.emptyPost('/refresh', null, {
     headers: {
         'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
     }
