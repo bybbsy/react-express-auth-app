@@ -33,23 +33,25 @@ export const useMainStore = defineStore('main', {
 
       const { user, tokens }  = await login(inputData)
       localStorage.setItem('accessToken', tokens.accessToken)
+
       this.isAuth = true  
       this.user = user
     },
     async logout() {
       await logout()
+      localStorage.removeItem('accessToken')
       this.user = null
       this.isAuth = false
     },
     async checkAuth() {
       try { 
-        const { user, tokens } : IUserData = await refresh(); 
-        
+        const { user, tokens } : IUserData = await refresh()
         localStorage.setItem('accessToken', tokens.accessToken)
+        
         this.user = user
         this.isAuth = true
       } catch (e) {
-        console.log('Un auth error', e)
+        console.log('Unauth error', e)
       }
     },
     async signup(email: string, password: string) {
