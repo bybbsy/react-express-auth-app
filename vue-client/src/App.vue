@@ -20,10 +20,7 @@ export default defineComponent({
       return defineAsyncComponent(() => import(`@/layouts/${name}.vue`));
     })
 
-    if(localStorage.getItem('accessToken')) {
-      mainStore.checkAuth();
-    }
-
+    
     return {
       layout
     }

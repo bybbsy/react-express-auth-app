@@ -42,6 +42,15 @@ const router = createRouter({
   routes
 })
 
+
+router.beforeEach(async (to, from, next) => {
+  const mainStore = useMainStore();
+
+  if(localStorage.getItem('accessToken')) {
+    await mainStore.checkAuth();
+  }
+  next()
+})
  
 
 // router.beforeEach(async (to, from, next) => {
