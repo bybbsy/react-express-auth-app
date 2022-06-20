@@ -2,10 +2,10 @@
   <header class="header">
     <div class="flex w-md mx-auto items-center justify-between">
       <div class="logo">
-        <h1>Vue-auth</h1>
+        <h1 class="main-logo">JWT-Auth</h1>
       </div>
-      <ul class="flex">
-        <div class="flex" v-if="!userIsAuth">
+      <ul class="flex items-center">
+        <div class="flex">
           <li>
             <router-link
               class="mx-2 text-lg font-semibold tracking-wide"
@@ -20,7 +20,7 @@
               >About</router-link
             >
           </li>
-          <li>
+          <li v-if="!userIsAuth">
             <router-link
               class="
                 mx-2
@@ -41,7 +41,7 @@
             >
           </li>
 
-          <li>
+          <li v-if="!userIsAuth">
             <router-link
               class="
                 mx-2
@@ -101,10 +101,8 @@ export default defineComponent({
   setup() {
     const mainStore = useMainStore();
 
-    const userIsAuth = computed(() => {
-      console.log("e");
-      return mainStore.isAuth;
-    });
+    const userIsAuth = computed(() => mainStore.isAuth);
+
     const handleUserSignout = () => mainStore.logout();
 
     return {
@@ -128,5 +126,11 @@ export default defineComponent({
   display: flex;
   align-items: center;
   justify-content: space-between;
+}
+
+.main-logo {
+  font-family: 'Luckiest Guy', cursive;
+  font-weight: 400;
+  font-size: 2em;
 }
 </style>

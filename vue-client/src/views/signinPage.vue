@@ -1,6 +1,7 @@
 <template>
- <div class="w-full h-full">
-    <div class="w-full h-full flex">
+ <div class="w-full h-full flex flex-col">
+    <h1 class="main-logo flex my-16 mx-auto">JWT-Auth sign in</h1>
+    <div class="w-full flex">
       <form class="bg-white flex flex-col shadow-md rounded px-8 pt-6 pb-8 mx-auto my-auto">
         <div class="mb-4">
           <label

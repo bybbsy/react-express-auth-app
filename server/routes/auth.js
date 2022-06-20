@@ -3,6 +3,7 @@ const UserModel = require('../models/user')
 const TokenModel = require('../models/token')
 
 const jwt = require('jsonwebtoken')
+const AuthServiceError = require('../models/error')
 
 const router = Router()
 
@@ -59,12 +60,11 @@ router.post('/sign-up', async (req, res) => {
     const candidate = await UserModel.findOne({email})
     
     if(candidate) {
-        throw new Error("User already exists!")
+        throw AuthServiceError.InvalidRequest("User already exists!")
     }
 
     const user = await UserModel.create({ email, password })
 
-    console.log(typeof user)
     const accessToken = jwt.sign(user.toJSON(), process.env.ACCESS_TOKEN, { expiresIn: '15s'})
     const refreshToken = jwt.sign(user.toJSON(), process.env.REFRESH_TOKEN, { expiresIn: '30s'})
 
@@ -89,7 +89,7 @@ router.post('/sign-in', async (req, res) => {
     const user = await UserModel.findOne({email});
  
     if(!user) {
-        throw new Error('there is no such user');
+        throw AuthServiceError.Unauthorized();
     }
 
     const accessToken = jwt.sign(user.toJSON(), process.env.ACCESS_TOKEN, { expiresIn: '15s'})
@@ -138,9 +138,9 @@ router.post('/refresh', async (req, res) => {
     
         console.log(!userData || !tokenInDB)
         if(!userData || !tokenInDB) {
-            throw new Error('Unauth error')
+            throw AuthServiceError.Unauthorized()
         }
-    
+
         const user = await UserModel.findById(userData._id)
         const accessToken = jwt.sign(user.toJSON(), process.env.ACCESS_TOKEN, { expiresIn: '15s'})
         const refreshToken = jwt.sign(user.toJSON(), process.env.REFRESH_TOKEN, { expiresIn: '30s'})
@@ -163,10 +163,10 @@ router.post('/refresh', async (req, res) => {
             refreshToken
         }
 
-        console.log(tokens)
         res.send({user, tokens});
     } catch (e) {
-        return res.status(401).json({msg: e.message});   
+        console.log(e)
+        return res.status(e.status).json({msg: e.message});   
     }
 })
 
@@ -180,8 +180,6 @@ router.get('/posts', authenticateToken, (req, res) => {
     })
     
 })
-
-
 
 function authenticateToken(req, res, next) {
     const authHeader = req.headers['authorization']

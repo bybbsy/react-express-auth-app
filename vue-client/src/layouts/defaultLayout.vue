@@ -1,5 +1,5 @@
 <template>
-  <div class="default-layout">
+  <div class="default-layout w-full h-full">
     <the-header/>
     <main class="h-full">
         <router-view/>

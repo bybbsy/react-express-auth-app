@@ -6,6 +6,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
 const cors = require('cors');
+const errorHandler = require('./middleware/error-handler')
 
 const app = express();
 
@@ -22,15 +23,16 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json())
 app.use(cookieParser())
 app.use('/api/', authRoutes);
+// app.use(errorHandler)
 
-app.use((err, req, res, next) => {
-  console.log(err);
+// app.use((err, req, res, next) => {
+//   console.log(err);
 
-  if(err instanceof Error) {
-    return res.status(err.status).json({ message: err.message })
-  }
-  return res.status(500).json({ message: 'error' })
-})
+//   if(err instanceof Error) {
+//     return res.status(err.status).json({ message: err.message })
+//   }
+//   return res.status(500).json({ message: 'error' })
+// })
 
 app.listen(3000, () => {
     console.log('Listening on port 3000')
