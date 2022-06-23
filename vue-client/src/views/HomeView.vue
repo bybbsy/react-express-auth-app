@@ -70,14 +70,14 @@
 </template>
 
 <script lang="ts">
-import { useMainStore } from "@/store";
+import { useAuthStore } from "@/store/authStore";
 import { computed, defineComponent } from "@vue/runtime-core";
 import { getCards } from "@/services/cardService";
 import { useCardStore } from "@/store/cardStore";
 
 export default defineComponent({
   setup() {
-    const mainStore = useMainStore()
+    const mainStore = useAuthStore()
     const cardStore = useCardStore()
 
     const user = computed(() => mainStore.user)

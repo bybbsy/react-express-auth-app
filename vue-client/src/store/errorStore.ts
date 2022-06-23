@@ -2,7 +2,8 @@ import { defineStore } from "pinia";
 
 export interface IError {
     status?: number,
-    message: string
+    message: string,
+    id: Date
 }
 
 export const useErrorStore = defineStore('error-store', {

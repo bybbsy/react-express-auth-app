@@ -8,12 +8,12 @@
 <script lang="ts">
 import { computed, defineAsyncComponent, defineComponent } from 'vue'
 import { useRoute } from 'vue-router';
-import { useMainStore } from './store'
+import { useAuthStore } from './store/authStore'
 
 export default defineComponent({
   setup(props, ctx) {
     const route = useRoute();
-    const mainStore = useMainStore();
+    const mainStore = useAuthStore();
 
     const layout = computed(() => {
       const name = (route.meta?.layout ?? 'default') + 'Layout'

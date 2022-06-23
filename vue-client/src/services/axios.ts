@@ -1,5 +1,4 @@
 import { clearCookieAndLS, getAuthorizationString } from "@/helpers/auth";
-import { IUserData } from "@/store";
 import { AxiosClient } from "./index";
 import axios, { AxiosRequestConfig } from "axios";
 

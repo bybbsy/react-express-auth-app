@@ -1,4 +1,4 @@
-import { IUser, IUserData } from "@/store";
+import { IUser } from "@/store/authStore";
 import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
 
 export class AxiosClient {

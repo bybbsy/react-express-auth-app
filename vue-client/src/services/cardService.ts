@@ -1,5 +1,4 @@
-import { clearCookieAndLS, getAuthorizationString } from "@/helpers/auth";
-import { IUserData } from "@/store";
+import { getAuthorizationString } from "@/helpers/auth";
 import { ICard } from "@/store/cardStore";
 import axios from './axios';
 

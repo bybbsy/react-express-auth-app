@@ -104,7 +104,7 @@
 
 <script lang="ts">
 import { clearCookieAndLS } from "@/helpers/auth";
-import { useMainStore } from "@/store";
+import { useAuthStore } from "@/store/authStore";
 import { defineComponent } from "@vue/runtime-core";
 import { computed } from "vue";
 import { useRouter } from "vue-router";
@@ -112,7 +112,7 @@ import { useRouter } from "vue-router";
 export default defineComponent({
   name: "the-header",
   setup() {
-    const mainStore = useMainStore();
+    const mainStore = useAuthStore();
     const router = useRouter()
 
     const userIsAuth = computed(() => mainStore.isAuth);

@@ -113,13 +113,13 @@
 </template>
 
 <script lang="ts">
-import { useMainStore } from '@/store'
+import { useAuthStore } from '@/store/authStore'
 import { defineComponent, ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 export default defineComponent({
   setup() {
-    const mainStore = useMainStore()
+    const mainStore = useAuthStore()
     const router = useRouter()
 
     const email = ref('')

@@ -1,5 +1,5 @@
 import { clearCookieAndLS, getAuthorizationString } from "@/helpers/auth";
-import { IUser, IUserData } from "@/store";
+import { IUser, IUserData } from "@/store/authStore";
 import axios from "axios";
 import { AxiosClient } from "./index";
 

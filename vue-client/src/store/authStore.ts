@@ -19,7 +19,7 @@ export interface IUserData {
 
 export type INullableUser = IUser | null
 
-export const useMainStore = defineStore('main', {
+export const useAuthStore = defineStore('auth-store', {
   state: () => ({
     user: null as INullableUser,
     isAuth: false
