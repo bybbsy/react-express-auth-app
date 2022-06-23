@@ -1,5 +1,5 @@
 <template>
-  <div class="empty-layout">
+  <div class="empty-layout px-2">
     <main class="h-full">
         <router-view/>
     </main>
