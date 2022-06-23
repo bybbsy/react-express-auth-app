@@ -1,4 +1,4 @@
-import { clearCookieAndLS } from "@/helpers/auth";
+import { clearCookieAndLS, getAuthorizationString } from "@/helpers/auth";
 import { IUser, IUserData } from "@/store";
 import axios from "axios";
 import { AxiosClient } from "./index";
@@ -11,7 +11,7 @@ export const login = (user: IUser): Promise<IUserData> => {
     headers: {
     'Accept': 'application/json',
     'Content-Type': 'application/json',
-    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+    'Authorization': getAuthorizationString()
   }});
 }
 
@@ -31,7 +31,7 @@ export const refresh = async():  Promise<IUserData> => {
   return axios.post('http://localhost:3000/api/refresh', null, {
     withCredentials: true,
     headers: {
-        'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+        'Authorization': getAuthorizationString()
     }
   })
 } 

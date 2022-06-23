@@ -1,4 +1,4 @@
-import { clearCookieAndLS } from "@/helpers/auth";
+import { clearCookieAndLS, getAuthorizationString } from "@/helpers/auth";
 import { IUserData } from "@/store";
 import { ICard } from "@/store/cardStore";
 import axios from './axios';
@@ -8,7 +8,7 @@ export const getCards = async (): Promise<ICard[]> => {
         headers: {
             'Accept': 'application/json',
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+            'Authorization': getAuthorizationString()
         }
     })
 }

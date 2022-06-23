@@ -1,4 +1,4 @@
-import { clearCookieAndLS } from "@/helpers/auth";
+import { clearCookieAndLS, getAuthorizationString } from "@/helpers/auth";
 import { IUserData } from "@/store";
 import { AxiosClient } from "./index";
 import axios, { AxiosRequestConfig } from "axios";
@@ -6,7 +6,7 @@ import axios, { AxiosRequestConfig } from "axios";
 const axiosClient = new AxiosClient('http://localhost:3000/api');
 
 axiosClient.client.interceptors.request.use((config: AxiosRequestConfig) => {
-    config.headers!.Authorization = `Bearer ${localStorage.getItem('accessToken')}`
+    config.headers!.Authorization = getAuthorizationString()
     return config;
 })
 
