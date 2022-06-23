@@ -1,28 +1,40 @@
-import { IUser, IUserData } from "@/store";
-import axios, { AxiosInstance, AxiosRequestConfig } from "axios";
+import { clearCookieAndLS } from "@/helpers/auth";
+import { IUserData } from "@/store";
+import { AxiosClient } from "./index";
+import axios, { AxiosRequestConfig } from "axios";
 
-export class AxiosClient {
-    client: AxiosInstance
+const axiosClient = new AxiosClient('http://localhost:3000/api');
 
-    constructor(baseURL: string) {
-        this.client = axios.create({
-            withCredentials: true,
-            baseURL
-        })
-    }
+axiosClient.client.interceptors.request.use((config: AxiosRequestConfig) => {
+    config.headers!.Authorization = `Bearer ${localStorage.getItem('accessToken')}`
+    return config;
+})
 
-    async get<T>(url: string, params?: AxiosRequestConfig): Promise<T> {
-        const res = await this.client.get(url, params);
-        return res.data;
-    }
 
-    async post<T>(url: string, data: IUser, params?: AxiosRequestConfig): Promise<T> {
-        const res = await this.client.post(url, data, params);
-        return res.data;
-    }
+axiosClient.client.interceptors.response.use(
+    config => config,
+    async (error) => {
+        const origialRequest = error.config; 
+        if(error.response.status == 401 && error.config && !error.config._isRetry) {
+            origialRequest._isRetry = true            
+            try {
+                const res = await axios.post('http://localhost:3000/api/refresh', null, {
+                    withCredentials: true
+                });
     
-    async emptyPost<T>(url: string, data: null, params?: AxiosRequestConfig): Promise<T> {
-        const res = await this.client.post(url, data, params);
-        return res.data;
-    }
-}
+                console.log('res', res.data)
+                localStorage.setItem('accessToken', res.data.tokens.accessToken)
+  
+                return axiosClient.client.request(origialRequest)
+            } catch (e) {
+                console.log("User is unauthorized")
+  
+                // Remove accessToken and refreshToken to prevent from sending this request when page reloads
+                // if refreshToken is expired
+                clearCookieAndLS()
+            }
+        }
+        throw error;
+    })
+
+export default axiosClient
