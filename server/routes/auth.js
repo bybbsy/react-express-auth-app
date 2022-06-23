@@ -53,7 +53,7 @@ router.post('/sign-in', async (req, res) => {
 
         await saveRefreshToken(tokenData, user, tokens.refreshToken)
 
-        res.cookie('refreshToken', tokens.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: false})
+        res.cookie('refreshToken', tokens.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000})
         
         res.send({user, tokens})
 
@@ -64,6 +64,8 @@ router.post('/sign-in', async (req, res) => {
 
 router.post('/sign-out', async (req, res) => {
     const { refreshToken } = req.cookies
+
+    console.log(req)
     const tokenData = await TokenModel.deleteOne({ refreshToken })
     
     res.clearCookie('refreshToken');
@@ -76,13 +78,14 @@ router.post('/sign-out', async (req, res) => {
 
 router.post('/refresh', async (req, res) => {
     try {
-        const rt = req.cookies.refreshToken;
+        const { refreshToken } = req.cookies;
+ 
+        const userData = validateRefreshToken(refreshToken)
         
-        const userData = validateRefreshToken(rt)
-
-        const tokenInDB = await TokenModel.findOne({ refreshToken: rt })
-
+        const tokenInDB = await TokenModel.findOne({ refreshToken })
+         
         console.log(!userData || !tokenInDB)
+
         if(!userData || !tokenInDB) {
             throw AuthServiceError.Unauthorized()
         }
@@ -95,7 +98,7 @@ router.post('/refresh', async (req, res) => {
 
         await saveRefreshToken(tokenData, user, tokens.refreshToken)
     
-        res.cookie('refreshToken', tokens.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000, httpOnly: false})
+        res.cookie('refreshToken', tokens.refreshToken, { maxAge: 30 * 24 * 60 * 60 * 1000})
 
         res.send({user, tokens})
     } catch (e) {
