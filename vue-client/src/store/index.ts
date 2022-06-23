@@ -26,6 +26,7 @@ export const useMainStore = defineStore('main', {
   }),
   actions: {
     async login(email: string, password: string) {
+       
       const inputData = {
         email,
         password
@@ -33,7 +34,7 @@ export const useMainStore = defineStore('main', {
 
       const { user, tokens }  = await login(inputData)
       localStorage.setItem('accessToken', tokens.accessToken)
-
+       
       this.isAuth = true  
       this.user = user
     },
@@ -45,10 +46,11 @@ export const useMainStore = defineStore('main', {
     },
     async checkAuth() {
       try { 
-        const { user, tokens } : IUserData = await refresh()
-        localStorage.setItem('accessToken', tokens.accessToken)
-        
-        this.user = user
+        const res = await axios.post('http://localhost:3000/api/refresh', null, { withCredentials: true })
+         
+        localStorage.setItem('accessToken', res.data.tokens.accessToken)
+      
+        this.user = res.data.user
         this.isAuth = true
       } catch (e) {
         console.log('Unauth error', e)
