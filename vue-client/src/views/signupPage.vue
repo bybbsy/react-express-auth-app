@@ -36,7 +36,7 @@
               "
               id="inline-full-name"
               type="text"
-              value="Jane Doe"
+              v-model="email"
             />
           </div>
         </div>
@@ -74,6 +74,7 @@
               id="inline-password"
               type="password"
               placeholder="******************"
+              v-model="password"
             />
           </div>
         </div>
@@ -100,6 +101,7 @@
                 rounded
               "
               type="button"
+              @click="handleSingup"
             >
               Sign Up
             </button>
@@ -110,8 +112,35 @@
   </div>
 </template>
 
-<script>
-export default {};
+<script lang="ts">
+import { useMainStore } from '@/store'
+import { defineComponent, ref } from 'vue'
+import { useRouter } from 'vue-router'
+
+export default defineComponent({
+  setup() {
+    const mainStore = useMainStore()
+    const router = useRouter()
+
+    const email = ref('')
+    const password = ref('')
+
+    const handleSingup = async () => {
+      try {
+        await mainStore.signup(email.value, password.value)
+        router.push({name: 'home'})
+      } catch(e) {
+        console.log('Error on signing-up: ', e)
+      }
+    }
+    
+    return {
+      email,
+      password,
+      handleSingup
+    }
+  },
+})
 </script>
 
 <style>

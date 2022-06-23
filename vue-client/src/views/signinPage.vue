@@ -87,33 +87,47 @@
             Create account
           </router-link>
         </div>
+        <div class="text-red-600" v-for="(e, i) in errors" :key="i">{{ e.status }} {{ e.message }}</div>
+        <div class=""> {{ error }}</div>
       </form>
     </div>
   </div>
 </template>
 
 <script lang="ts">
+import { useErrorStore } from  '@/store/errorStore/errorStore'
 import { useMainStore } from "@/store";
-import { defineComponent } from "@vue/runtime-core";
-import { ref } from "vue";
+import { defineComponent, ref, reactive, computed } from "vue";
 import { useRouter } from "vue-router";
+import { AxiosError } from 'axios';
 
 export default defineComponent({
   setup() {
     const mainStore = useMainStore()
+    const errorStore = useErrorStore()
     const router = useRouter()
+
     const email = ref('')
     const password = ref('')
+    
+    let error = reactive({})
+    const errors = computed(() => errorStore.errors)
 
     const handleUserSignin = async () => {
-      await mainStore.login(email.value, email.value)
-      router.push({name: 'home'})
+      try {
+        await mainStore.login(email.value, email.value)
+        router.push({name: 'home'})
+      } catch(e: any) {
+        errorStore.addError({status: 401, message: e.response.data.msg })
+      }
     } 
 
     return {
       handleUserSignin,
       email,
-      password
+      password,
+      errors,
+      error
     }
   }
 })
