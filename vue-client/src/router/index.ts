@@ -42,24 +42,4 @@ const router = createRouter({
   routes
 })
 
-
-router.beforeEach(async (to, from, next) => {
-  const mainStore = useMainStore();
-
-  if(localStorage.getItem('accessToken')) {
-    await mainStore.checkAuth();
-  }
-  next()
-})
- 
-
-// router.beforeEach(async (to, from, next) => {
-//   const mainStore = useMainStore();
-//   if(mainStore.isAuth && to.meta.auth == true) {
-//     next()
-//   } else if(!mainStore.isAuth && to.meta.auth == true) {
-//     next({ name: 'sign-in'})
-//   }
-//   next();
-// })
 export default router
