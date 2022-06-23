@@ -15,6 +15,14 @@ router.post('/sign-up', async (req, res) => {
     
         const candidate = await UserModel.findOne({email})
         
+        if(!email) {
+            throw AuthServiceError.InvalidRequest('Email was not provided')
+        }
+
+        if(!password) {
+            throw AuthServiceError.InvalidRequest('Password was not provided')
+        }
+
         if(candidate) {
             throw AuthServiceError.InvalidRequest('User already exists!')
         }
@@ -40,9 +48,16 @@ router.post('/sign-in', async (req, res) => {
     try {
         const { email, password } = req.body;
 
-        console.log(email)
+        console.log(req.body)
+        if(!email) {
+            throw AuthServiceError.InvalidRequest('Email was not provided')
+        }
+
+        if(!password) {
+            throw AuthServiceError.InvalidRequest('Password was not provided')
+        }
+
         const user = await UserModel.findOne({email});
-    
         if(!user) {
             throw AuthServiceError.Unauthorized();
         }
