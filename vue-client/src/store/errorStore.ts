@@ -16,6 +16,12 @@ export const useErrorStore = defineStore('error-store', {
         },
         clearErrors() {
             this.errors = []
+        },
+        messageInArray(message: string): boolean {
+            return this.errors.some((val: IError) => val.message.trim() === message.trim());
+        },
+        deleteMessage(message: string) {
+           this.errors = this.errors.filter(val => val.message.trim() !== message.trim())
         }
     }
 })
