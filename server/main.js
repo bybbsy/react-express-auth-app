@@ -2,6 +2,8 @@ require('dotenv').config()
 
 const express = require('express')
 const authRoutes = require('./routes/auth')
+const cardListRoutes = require('./routes/cardList')
+
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser')
 const cookieParser = require('cookie-parser')
@@ -11,7 +13,7 @@ const errorHandler = require('./middleware/error-handler')
 const app = express();
 
 mongoose.connect(`mongodb+srv://${process.env.MONGO_NICK}:${process.env.MONGO_PW}@todo-app.6kddvz6.mongodb.net/users-db`, { useNewUrlParser: true, useUnifiedTopology: true })
-  .catch(err => console.error(err));
+  .catch(err => console.error('err', err));
 
 
 app.use(cors({
@@ -19,20 +21,15 @@ app.use(cors({
   origin: 'http://localhost:8080'
 }));
  
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(cookieParser())
-app.use('/api/', authRoutes);
-// app.use(errorHandler)
 
-// app.use((err, req, res, next) => {
-//   console.log(err);
+app.use('/api/', authRoutes)
+app.use('/api/', cardListRoutes) 
 
-//   if(err instanceof Error) {
-//     return res.status(err.status).json({ message: err.message })
-//   }
-//   return res.status(500).json({ message: 'error' })
-// })
+
+app.use(errorHandler)
 
 app.listen(3000, () => {
     console.log('Listening on port 3000')
