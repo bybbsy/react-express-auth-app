@@ -18,8 +18,11 @@ export default defineComponent({
     const layout = computed(() => {
       const name = (route.meta?.layout ?? 'default') + 'Layout'
       return defineAsyncComponent(() => import(`@/layouts/${name}.vue`));
-    })
+    }) 
 
+    if(localStorage.getItem('accessToken')) {
+      mainStore.checkAuth();
+    } 
     
     return {
       layout
