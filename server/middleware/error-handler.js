@@ -1,13 +1,13 @@
 const AuthServiceError = require('../models/error')
 
-module.exports = function(err, req, res) {
+module.exports = function(err, req, res, next) {
     if(err instanceof AuthServiceError) {
         return res.status(err.status).json({
             message: err.message
         })        
     }
     
-    return res.status(500).json({
+    return res.status(500).send({
         message: 'Server side error, try again later',
     })
 }

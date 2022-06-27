@@ -10,6 +10,9 @@ const cookieParser = require('cookie-parser')
 const cors = require('cors');
 const errorHandler = require('./middleware/error-handler')
 
+const swaggerUI = require('swagger-ui-express')
+const swaggerOptions = require('./swagger/config')
+
 const app = express();
 
 mongoose.connect(`mongodb+srv://${process.env.MONGO_NICK}:${process.env.MONGO_PW}@todo-app.6kddvz6.mongodb.net/users-db`, { useNewUrlParser: true, useUnifiedTopology: true })
@@ -30,6 +33,8 @@ app.use('/api/', cardListRoutes)
 
 
 app.use(errorHandler)
+
+app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerOptions))
 
 app.listen(3000, () => {
     console.log('Listening on port 3000')
