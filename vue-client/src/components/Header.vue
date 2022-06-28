@@ -117,9 +117,8 @@ export default defineComponent({
 
     const userIsAuth = computed(() => mainStore.isAuth);
 
-    const handleUserSignout = () => {
-      mainStore.logout()
-      clearCookieAndLS()
+    const handleUserSignout = async () => {
+      await mainStore.logout()
       router.go(0)
     };
 
