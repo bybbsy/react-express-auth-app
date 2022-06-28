@@ -1,5 +1,5 @@
 # vue-express-auth-app
-Application made with react and express js to practice authorization and authentication
+Application made with Vue-js and expressJs to practice authorization and authentication 
 
 There are two directiories:
 - vue-client
