@@ -12,17 +12,6 @@ const router = Router()
  *   summary: Returns list of cards for authenticated users 
  *   tags:
  *    - Cards API
- *   parameters:
- *      - name: cookie
- *        description: contains refreshToken
- *        in: header
- *        required: true
- *        type: string
- *      - name: Authorization
- *        description: contains Bearer info
- *        in: header
- *        required: tue
- *        type: string
  *   responses:
  *      200:
  *       description: successful operation

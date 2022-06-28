@@ -223,12 +223,6 @@ router.post('/sign-in', async (req, res) => {
  *    summary: Signs out user
  *    tags:
  *      - Auth API
- *    parameters:
- *      - name: Set-Cookie
- *        description: A cookie that contains refreshToken
- *        in: header
- *        required: true
- *        type: string
  *    responses:
  *      200:
  *        description: Success log out
@@ -261,12 +255,6 @@ router.post('/sign-out', async (req, res) => {
  *    summary: Refreshes user tokens
  *    tags:
  *      - Auth API
- *    parameters:
- *      - name: Set-Cookie
- *        description: A cookie that contains refreshToken
- *        in: header
- *        required: true
- *        type: string
  *    responses:
  *      200:
  *        description: Success sign-up
