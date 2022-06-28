@@ -22,11 +22,75 @@ const options = {
                     bearerFormat: 'JWT'
                 }
             },
-        }
+            schemas: {
+                User: {
+                    type: 'object',
+                    properties: {
+                        email: {
+                            type: 'string',
+                            required: true
+                        },
+                        password: {
+                            type: 'string',
+                            required: true
+                        }
+                    }
+                },
+                Token: {
+                    type: 'object',
+                    properties: {
+                        user: {
+                            $ref: '#/components/schemas/User'
+                        },
+                        refreshToken: {
+                            type: 'string',
+                            required: true
+                        }
+                    }
+                },
+                Card: {
+                    type: 'object',
+                    properties: {
+                        title: {
+                            type: 'string'
+                        },
+                        description: {
+                            type: 'string'
+                        },
+                        imageUrl: {
+                            type: 'string'
+                        },
+                        tags: {
+                            type: 'array',
+                            items: {
+                                type: 'object',
+                                properties: {
+                                    name: {
+                                        type: 'string'
+                                    }
+                                }
+                            }
+                        }
+                    }
+                },
+                Error: {
+                    type: 'object',
+                    properties: {
+                        status: {
+                            type: 'integer'
+                        },
+                        message: {
+                            type: 'string'
+                        }
+                    }
+                }
+            }
+        },
     },
     apis: [
         './routes/*.js'
-    ]
+    ],
+
 }
 
 const config = swaggerJsDoc(options)
