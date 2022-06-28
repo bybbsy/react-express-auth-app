@@ -3,8 +3,8 @@ const TokenService = require('../service/token-service')
 
 module.exports = function(req, res, next) {
     try {
-        const accessToken = req.headers['authorization'].split(' ')[1]
          
+        const accessToken = req.headers['authorization'].split(' ')[1]
         if(!accessToken) {
             return next(AuthServiceError.Unauthorized())
         }

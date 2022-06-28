@@ -3,7 +3,7 @@ const TokenModel = require('../models/token')
 const jwt = require('jsonwebtoken')
 
 exports.createTokens = function(user) {
-    const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN, { expiresIn: '15s' })
+    const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN, { expiresIn: '50s' })
     const refreshToken = jwt.sign(user, process.env.REFRESH_TOKEN, { expiresIn: '60s' })
 
     return {
