@@ -1,7 +1,8 @@
 require('dotenv').config()
 
 const express = require('express')
-const authRoutes = require('./routes/jwtAuth')
+const JwtAuthRoutes = require('./routes/jwtAuth')
+const OAuth2Routes = require('./routes/OAuth2')
 const cardListRoutes = require('./routes/cardList')
 
 const mongoose = require('mongoose');
@@ -28,8 +29,9 @@ app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(cookieParser())
 
-app.use('/api/', authRoutes)
-app.use('/api/', cardListRoutes) 
+app.use('/api/auth/jwt/', JwtAuthRoutes)
+app.use('/api/auth/oauth2/', OAuth2Routes)
+app.use('/api/', cardListRoutes)
 
 
 app.use(errorHandler)
