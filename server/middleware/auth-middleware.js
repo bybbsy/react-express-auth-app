@@ -4,7 +4,7 @@ const TokenService = require('../service/token-service')
 module.exports = function (req, res, next) {
     try {
         const authHeader = req.headers['authorization']
-
+        
         if (authHeader) {
             const accessToken = authHeader.split(' ')[1]
 
@@ -19,9 +19,10 @@ module.exports = function (req, res, next) {
             }
 
             req.user = accessTokenIsValid
-            next()
+            return next()
         }
-        next(AuthServiceError.Unauthorized())
+        
+        return next(AuthServiceError.Unauthorized())
     } catch (e) {
         next(e)
     }

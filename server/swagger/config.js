@@ -451,6 +451,5 @@ const options = {
     ]
 }
 
-const config = swaggerJsDoc(options)
-console.log(config)
+const config = swaggerJsDoc(options) 
 module.exports = config

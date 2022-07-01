@@ -1,7 +1,7 @@
 require('dotenv').config()
 
 const express = require('express')
-const authRoutes = require('./routes/auth')
+const authRoutes = require('./routes/jwtAuth')
 const cardListRoutes = require('./routes/cardList')
 
 const mongoose = require('mongoose');
