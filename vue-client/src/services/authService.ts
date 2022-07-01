@@ -3,7 +3,7 @@ import { IUser, IUserData } from "@/store/authStore";
 import axios from "axios";
 import { AxiosClient } from "./index";
 
-const authServiceClient = new AxiosClient('http://localhost:3000/api')
+const authServiceClient = new AxiosClient('http://localhost:3000/api/auth/jwt')
 
 export const login = (user: IUser): Promise<IUserData> => {
   return authServiceClient.post('/sign-in', user, {
